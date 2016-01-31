@@ -42,4 +42,7 @@ def send_job_req():
 	r = requests.post("http://localhost:5000/api/jobs", data=json.dumps(data), headers=headers)
 	print r.text
 
-send_job_req()
+while True:
+	send_job_req()
+	print 'sent job'
+	time.sleep(random.uniform(0, 1))
