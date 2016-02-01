@@ -4,6 +4,7 @@ import signal
 from bson import json_util
 from datetime import datetime
 from haversine import haversine
+import random
 
 from pymongo import GEOSPHERE
 from pymongo import MongoClient
@@ -55,14 +56,27 @@ def job_cost_factory(lat, lng):
 	def cost(job):
 		pickup_tuple = (job['pickup']['lat'], job['pickup']['lng'])
 		dropoff_tuple = (job['dropoff']['lat'], job['dropoff']['lng'])
-
 		pickup_dist = haversine(pos, pickup_tuple)
 		delivery_dist = haversine(pickup_tuple, dropoff_tuple)
-
 		total_comp = travel_cost * (pickup_dist + delivery_dist) + delivery_cost * (delivery_dist)
 		return total_comp / (pickup_dist + delivery_dist)
-
 	return cost
+
+def job_pay(job):
+	pickup_tuple = (job['pickup']['lat'], job['pickup']['lng'])
+	dropoff_tuple = (job['dropoff']['lat'], job['dropoff']['lng'])
+	delivery_dist = haversine(pickup_tuple, dropoff_tuple)
+	pay = random.uniform(1.5, 4.0) * delivery_dist
+	job['pay'] = pay
+	return job
+
+def job_duration(job):
+	pickup_tuple = (job['pickup']['lat'], job['pickup']['lng'])
+	dropoff_tuple = (job['dropoff']['lat'], job['dropoff']['lng'])
+	delivery_dist = haversine(pickup_tuple, dropoff_tuple)
+	duration =  delivery_dist / random.uniform(25, 50) * 60.0
+	job['duration'] = duration
+	return job
 
 def error_response(msg):
 	resp = {
@@ -88,6 +102,8 @@ def create_job():
 	job_obj = request.get_json(silent=True)
 	if validate_accept_job(job_obj):
 		job_obj['timestamp'] = datetime.utcnow()
+		job_obj = job_pay(job_obj)
+		job_obj = job_duration(job_obj)
 		jobs_col.insert_one(job_obj)
 		return success_response('success')
 	else:

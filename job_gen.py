@@ -45,4 +45,4 @@ def send_job_req():
 while True:
 	send_job_req()
 	print 'sent job'
-	time.sleep(random.uniform(0, 1))
+	time.sleep(random.uniform(4, 6))
