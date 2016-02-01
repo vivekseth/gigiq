@@ -64,12 +64,24 @@ def job_cost_factory(lat, lng):
 
 	return cost
 
+def error_response(msg):
+	resp = {
+		'completion': 'error',
+		'data': msg
+	}
+	return json_util.dumps(resp)
 
+def success_response(data):
+	resp = {
+		'completion': 'success',
+		'data': data
+	}
+	return json_util.dumps(resp)
 
 
 @app.route('/')
 def index():
-	return 'hello world'
+	return success_response('hello world')
 
 @app.route('/api/jobs', methods=['POST'])
 def create_job():
@@ -77,23 +89,23 @@ def create_job():
 	if validate_accept_job(job_obj):
 		job_obj['timestamp'] = datetime.utcnow()
 		jobs_col.insert_one(job_obj)
-		return 'success'
+		return success_response('success')
 	else:
-		return 'invalid data'
+		return error_response('invalid data')
 
 @app.route('/api/jobs', methods=['GET'])
 def read_jobs():
 	agg_jobs = [j for j in jobs_col.find()]
-	return json_util.dumps(agg_jobs)
+	return success_response(agg_jobs)
 
 @app.route('/api/jobs', methods=['DELETE'])
 def delete_jobs():
 	res = jobs_col.delete_many({})
-	return 'deleted {} jobs.'.format(res.deleted_count)
+	return success_response('deleted {} jobs.'.format(res.deleted_count))
 
 @app.route('/api/jobs/accept/<job_id>', methods=['POST'])
 def accept_job(job_id):
-	return 'will accept job: {}.'.format(job_id)
+	return error_response('will accept job: {}.'.format(job_id))
 
 
 def near_find_options(lat, lng, min_dist, max_dist):
@@ -124,9 +136,9 @@ def search_jobs():
 		}))
 		sorted_jobs = sorted(jobs, key=job_cost_factory(lat, lng))
 
-		return json_util.dumps(sorted_jobs[0:5])
+		return success_response(sorted_jobs[0:5])
 	except ValueError, e:
-		return 'invalid lat/lng'
+		return error_response('invalid lat/lng')
 
 
 
