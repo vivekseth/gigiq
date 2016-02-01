@@ -115,18 +115,16 @@ def search_jobs():
 	lng_str = request.args.get('lng', '')
 	services = request.args.get('services', '').split(',')
 
-	print 'searching from ({}, {}) for {}'.format(lat_str, lng_str, services)
-
 	try:
 		lat = float(lat_str)
 		lng = float(lng_str)
 
-		jobs = row_array(jobs_col.find(limit=10, filter={
+		jobs = row_array(jobs_col.find(limit=20, filter={
 			'pickup': near_find_options(lat, lng, 0, 100000)
 		}))
 		sorted_jobs = sorted(jobs, key=job_cost_factory(lat, lng))
 
-		return json_util.dumps(sorted_jobs)
+		return json_util.dumps(sorted_jobs[0:5])
 	except ValueError, e:
 		return 'invalid lat/lng'
 
