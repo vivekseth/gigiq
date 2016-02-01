@@ -1,0 +1,45 @@
+Request
+- Unique ID
+- timestamp
+- service (enum)
+- pickup location
+- drop off location
+- Estimated Compensation (calcaluted based on pickup/dropoff)
+- Time to Complete (calcaluted based on pickup/dropoff)
+
+Hearbeat
+- lat/long
+- service preferences
+- timestamp
+
+# Every minute
+Phone -> Hearbeat -> Server
+Phone <- Ranked Requests <- Server
+
+# Rank Requests in the following way
+Filter requests by time
+First narrow requests by location (mongodb GeoHash)
+Rank jobs in terms of $/min
+	Value =  (Reward - Cost) / Time
+? Use distance from "homebase" as part of cost. Not quite sure how right now. 
+? look at trends in traffic over time to determine distance from dropoff location to next pickup location
+
+# Accepting a request
+Phone -> Accept Request with ID -> Server
+1. Phone <- Request already accpted <- Server
+2. Phone <- Cannot reach server <- ?
+3. Phone <- Request granted <- Server
+
+# Request Generation
+Randomize latlong based on center and radius
+- Pickup
+- Dropoff
+Randomize service
+Random wait times between generation
+
+# Accept Request from Third Party
+{
+	service,
+	pickup,
+	dropoff,
+}
