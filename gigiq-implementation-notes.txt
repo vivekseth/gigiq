@@ -43,3 +43,22 @@ Random wait times between generation
 	pickup,
 	dropoff,
 }
+
+================
+iphone app
+
+1. Login (not going to do this)
+2. Preferences 
+3. List of Gig Options (manual selection)
+	tableview of gigs 4
+	select gig to switch to app
+	(add options for amazon, and 1 more app)
+4. Single Gig Option (automatic selection)
+	selecting ❌ will go back to searching screen
+	selecting ✅ will switch to app
+5. Searching screen
+6. Mark job as complete
+	Can go back to searching if complete
+	or can go back to app if still continuing
+
+
