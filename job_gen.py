@@ -8,7 +8,16 @@ CENTER_LAT = 40.427951
 CENTER_LNG = -74.580549
 MAX_DIST = 20
 
-SERVICE_LIST = ['UBER', 'LYFT']
+SERVICE_LIST = [{
+  'service':'UBER',
+  'type':'Rideshare'
+}, {
+  'service': 'LYFT',
+  'type':'Rideshare' 
+}, {
+  'service': 'AMAZON',
+  'type':'Package Delivery' 
+}]
 
 def random_point(lat1, lon1, max_dist):
 	R = 6378.1 #Radius of the Earth
@@ -33,8 +42,11 @@ def random_service():
 	return random.sample(SERVICE_LIST, 1)[0]
 
 def send_job_req():
+	service = random_service()
+
 	data = {
-		'service': random_service(),
+		'service': service['service'],
+		'type': service['type'],
 		'pickup': random_point(CENTER_LAT, CENTER_LNG, MAX_DIST),
 		'dropoff': random_point(CENTER_LAT, CENTER_LNG, MAX_DIST),
 	}
@@ -45,4 +57,4 @@ def send_job_req():
 while True:
 	send_job_req()
 	print 'sent job'
-	time.sleep(random.uniform(4, 6))
+	time.sleep(random.uniform(0, 1))
