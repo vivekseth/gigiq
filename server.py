@@ -2,6 +2,7 @@ import sys
 import signal
 
 from bson import json_util
+from bson.objectid import ObjectId
 from datetime import datetime
 from haversine import haversine
 import random
@@ -37,6 +38,9 @@ def validate_latlng(latlng):
 def validate_accept_job(job_obj):
 	try:
 		if len(job_obj['service']) == 0:
+			raise ValueError('Invalid service name')
+
+		if len(job_obj['type']) == 0:
 			raise ValueError('Invalid service name')
 		
 		if not validate_latlng(job_obj['pickup']):
@@ -121,7 +125,10 @@ def delete_jobs():
 
 @app.route('/api/jobs/accept/<job_id>', methods=['POST'])
 def accept_job(job_id):
-	return error_response('will accept job: {}.'.format(job_id))
+	result = jobs_col.delete_one({'_id': ObjectId(job_id)})
+	return success_response(str(result.deleted_count))
+
+	# return error_response('will accept job: {}.'.format(job_id))
 
 
 def near_find_options(lat, lng, min_dist, max_dist):
@@ -147,15 +154,22 @@ def search_jobs():
 		lat = float(lat_str)
 		lng = float(lng_str)
 
-		jobs = row_array(jobs_col.find(limit=20, filter={
-			'pickup': near_find_options(lat, lng, 0, 100000)
-		}))
-		sorted_jobs = sorted(jobs, key=job_cost_factory(lat, lng))
+		query_filter = {'pickup': near_find_options(lat, lng, 0, 100000)}
+
+		if len(services) > 0:
+			query_filter['service'] = {'$in': services}
+
+		jobs = row_array(jobs_col.find(limit=20, filter=query_filter))
+		sorted_jobs = sorted(jobs, key=job_cost_factory(lat, lng), reverse=True)
 
 		return success_response(sorted_jobs[0:5])
 	except ValueError, e:
 		return error_response('invalid lat/lng')
 
+# @app.route('/api/services', methods=['GET'])
+# def all_services():
+# 	services = row_array(jobs_col.distinct('service'))
+# 	return success_response(services)
 
 
 if __name__ == "__main__":
