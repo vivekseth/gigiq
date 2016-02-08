@@ -16,8 +16,8 @@ client = MongoClient()
 db = client['gigiqdb']
 jobs_col = db['jobs']
 
-jobs_col.create_index([('pickup', GEOSPHERE)])
-jobs_col.create_index([('dropoff', GEOSPHERE)])
+jobs_col.ensure_index([('pickup', GEOSPHERE)])
+jobs_col.ensure_index([('dropoff', GEOSPHERE)])
 
 def signal_handler(signal, frame):
 	print '\nclosing database...'
