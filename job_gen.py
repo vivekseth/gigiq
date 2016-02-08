@@ -4,6 +4,8 @@ import math
 import random
 import requests
 
+BASE_URL = "http://gigiq.viveks3th.com:5100"
+
 CENTER_LAT = 40.427951
 CENTER_LNG = -74.580549
 MAX_DIST = 20
@@ -51,7 +53,7 @@ def send_job_req():
 		'dropoff': random_point(CENTER_LAT, CENTER_LNG, MAX_DIST),
 	}
 	headers = {'Content-Type': 'application/json'}
-	r = requests.post("http://localhost:5000/api/jobs", data=json.dumps(data), headers=headers)
+	r = requests.post(BASE_URL + "/api/jobs", data=json.dumps(data), headers=headers)
 	print r.text
 
 while True:

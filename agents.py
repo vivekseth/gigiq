@@ -4,6 +4,8 @@ import math
 import random
 import requests
 
+BASE_URL = 'http://gigiq.viveks3th.com:5100'
+
 CENTER_LAT = 40.427951
 CENTER_LNG = -74.580549
 MAX_DIST = 20
@@ -35,12 +37,12 @@ def get_jobs():
 		'lat': latlng['lat'],
 		'lng': latlng['lng'],
 	}
-	r = requests.get("http://localhost:5000/api/jobs", data=data)
+	r = requests.get(BASE_URL + "/api/jobs", data=data)
 	return r.json()['data']
 
 def accept_job(job):
 	oid = job['_id']['$oid']
-	r = requests.post("http://localhost:5000/api/jobs/accept/" + oid)
+	r = requests.post(BASE_URL + "/api/jobs/accept/" + oid)
 	return r.json()
 
 while True:
