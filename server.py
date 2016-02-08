@@ -175,4 +175,4 @@ def search_jobs():
 if __name__ == "__main__":
 	signal.signal(signal.SIGINT, signal_handler)
 	app.debug = True
-	app.run()
+	app.run(host="0.0.0.0", port=5100)
