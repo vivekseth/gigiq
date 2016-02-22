@@ -56,7 +56,16 @@ def send_job_req():
 	r = requests.post(BASE_URL + "/api/jobs", data=json.dumps(data), headers=headers)
 	print r.text
 
+def parseInputInt(index, default=1):
+	try:
+		return int(sys.argv[index])
+	except Exception, e:
+		return default
+
+min_wait = parseInputInt(1, default=0.0)
+max_wait = parseInputInt(2, default=1.0)
+
 while True:
 	send_job_req()
 	print 'sent job'
-	time.sleep(random.uniform(0, 1))
+	time.sleep(random.uniform(min_wait, max_wait))

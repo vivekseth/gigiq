@@ -1,3 +1,4 @@
+import sys
 import time
 import json
 import math
@@ -37,7 +38,7 @@ def get_jobs():
 		'lat': latlng['lat'],
 		'lng': latlng['lng'],
 	}
-	r = requests.get(BASE_URL + "/api/jobs", data=data)
+	r = requests.get(BASE_URL + "/api/jobs/search", params=data)
 	return r.json()['data']
 
 def accept_job(job):
@@ -45,10 +46,19 @@ def accept_job(job):
 	r = requests.post(BASE_URL + "/api/jobs/accept/" + oid)
 	return r.json()
 
+def parseInputInt(index, default=1):
+	try:
+		return int(sys.argv[index])
+	except Exception, e:
+		return default
+
+min_wait = parseInputInt(1, default=0.0)
+max_wait = parseInputInt(2, default=1.0)
+
 while True:
 	jobs = get_jobs()
 	if len(jobs) > 0:
 		print accept_job(jobs[0])
 	else:
 		print 'waiting for jobs...'
-	time.sleep(random.uniform(0, 1))
+	time.sleep(random.uniform(min_wait, max_wait))
